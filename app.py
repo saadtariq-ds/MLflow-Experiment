@@ -1,4 +1,5 @@
 import os
+import dagshub
 import warnings
 import sys
 import pandas as pd
@@ -15,6 +16,7 @@ import logging
 logging.basicConfig(level=logging.WARN)
 logger = logging.getLogger(__name__)
 
+dagshub.init(repo_owner='saadtariq-ds', repo_name='MLflow-Experiment', mlflow=True)
 
 def eval_metrics(actual, predicted):
     rmse = np.sqrt(mean_squared_error(actual, predicted))
@@ -69,6 +71,10 @@ if __name__ == "__main__":
 
         predictions = lr.predict(train_x)
         signature = infer_signature(train_x, predictions)
+
+        # For remote server only (DAGShub)
+        remote_server_uri = "https://dagshub.com/saadtariq-ds/MLflow-Experiment.mlflow"
+        mlflow.set_tracking_uri(remote_server_uri)
 
         tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
 
